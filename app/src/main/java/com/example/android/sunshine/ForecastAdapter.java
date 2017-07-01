@@ -14,6 +14,11 @@ import android.widget.TextView;
 public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapterViewHolder>{
 
     private String[] mWeatherData;
+    private final ForecastAdapterOnClickHandler mOnClickHandler;
+
+    public ForecastAdapter(ForecastAdapterOnClickHandler clickHandler){
+        mOnClickHandler = clickHandler;
+    }
 
     //----------------------------------------------------------------------------------------------
 
@@ -24,8 +29,14 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     //----------------------------------------------------------------------------------------------
 
+    public interface ForecastAdapterOnClickHandler{
+        void onClick(String weatherForDay);
+    }
+
+    //----------------------------------------------------------------------------------------------
+
     @Override
-    public ForecastAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ForecastAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.forecast_list_item, parent, false);
@@ -49,15 +60,22 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     //----------------------------------------------------------------------------------------------
 
-    public class ForecastAdapterViewHolder extends RecyclerView.ViewHolder{
+    public class ForecastAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public final TextView mWeatherTextView;
 
         public ForecastAdapterViewHolder(View itemView){
             super(itemView);
             mWeatherTextView = (TextView) itemView.findViewById(R.id.tv_weather_data);
+            itemView.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            String weatherForDay = mWeatherData[position];
+            mOnClickHandler.onClick(weatherForDay);
+        }
     }
 
     //----------------------------------------------------------------------------------------------

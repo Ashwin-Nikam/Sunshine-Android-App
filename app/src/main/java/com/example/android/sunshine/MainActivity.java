@@ -5,28 +5,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.utilities.NetworkUtils;
 import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 
-import org.json.JSONException;
-
-import java.io.IOException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler{
 
     TextView mErrorMessageDisplay;
     ProgressBar mLoadingIndicator;
     RecyclerView mRecyclerView;
     ForecastAdapter mForecastAdapter;
+    Toast mToast;
 
     //----------------------------------------------------------------------------------------------
 
@@ -40,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
-        mForecastAdapter = new ForecastAdapter();
+        mForecastAdapter = new ForecastAdapter(this);
 
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mForecastAdapter);
@@ -61,6 +59,20 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    @Override
+    public void onClick(String weatherForDay) {
+        if((mToast == null) || !mToast.getView().isShown()){
+            mToast = Toast.makeText(this, weatherForDay, Toast.LENGTH_SHORT);
+            mToast.show();
+        }else{
+            mToast.cancel();
+            mToast = Toast.makeText(this, weatherForDay, Toast.LENGTH_SHORT);
+            mToast.show();
+        }
     }
 
     //----------------------------------------------------------------------------------------------
