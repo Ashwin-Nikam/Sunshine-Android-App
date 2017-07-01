@@ -1,10 +1,14 @@
 package com.example.android.sunshine;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
     ProgressBar mLoadingIndicator;
     RecyclerView mRecyclerView;
     ForecastAdapter mForecastAdapter;
-    Toast mToast;
 
     //----------------------------------------------------------------------------------------------
 
@@ -65,14 +68,9 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
 
     @Override
     public void onClick(String weatherForDay) {
-        if((mToast == null) || !mToast.getView().isShown()){
-            mToast = Toast.makeText(this, weatherForDay, Toast.LENGTH_SHORT);
-            mToast.show();
-        }else{
-            mToast.cancel();
-            mToast = Toast.makeText(this, weatherForDay, Toast.LENGTH_SHORT);
-            mToast.show();
-        }
+        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+        intent.putExtra(Intent.EXTRA_TEXT, weatherForDay);
+        startActivity(intent);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -123,6 +121,23 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
 
     //----------------------------------------------------------------------------------------------
 
+    private void openLocationInMap(){
+        String location = "1600 Amphitheatre Parkway, CA";
+        Uri.Builder builder = new Uri.Builder();
+        Uri uri = builder.scheme("geo")
+                    .path("0,0")
+                    .query(location)
+                    .build();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(uri);
+        if(intent.resolveActivity(getPackageManager()) != null)
+            startActivity(intent);
+        else
+            Log.d("Error", "Couldn't call to "+location+", no" +
+                    "apps insalled");
+    }
+
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -138,8 +153,9 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
                 mForecastAdapter.setWeatherData(null);
                 loadWeatherData();
                 return true;
-            default:
-                break;
+            case R.id.menu_open_map:
+                openLocationInMap();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

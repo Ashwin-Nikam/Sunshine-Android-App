@@ -8,4 +8,10 @@
         android:orderInCategory="1"
         app:showAsAction="never"></item>
 
+    <item
+        android:id="@+id/menu_open_map"
+        android:title="Map Location"
+        app:showAsAction="never"
+        android:orderInCategory="2" />
+
 </menu>
