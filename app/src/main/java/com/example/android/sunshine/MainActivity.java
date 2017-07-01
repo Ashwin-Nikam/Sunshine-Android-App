@@ -36,5 +36,7 @@ public class MainActivity extends AppCompatActivity {
             mWeatherTextView.append(dummyWeatherDay + "\n\n\n");
         }
 
+        
+
     }
 }
