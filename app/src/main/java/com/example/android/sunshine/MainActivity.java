@@ -1,9 +1,10 @@
 package com.example.android.sunshine;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.utilities.NetworkUtils;
@@ -22,12 +22,15 @@ import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler{
+public class MainActivity extends AppCompatActivity implements
+        ForecastAdapter.ForecastAdapterOnClickHandler,
+        LoaderManager.LoaderCallbacks<String[]>{
 
     TextView mErrorMessageDisplay;
     ProgressBar mLoadingIndicator;
     RecyclerView mRecyclerView;
     ForecastAdapter mForecastAdapter;
+    private static final int LOADER_ID = 7;
 
     //----------------------------------------------------------------------------------------------
 
@@ -47,7 +50,9 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         mRecyclerView.setAdapter(mForecastAdapter);
         mRecyclerView.setHasFixedSize(true);
 
-        loadWeatherData();
+        int loaderId = LOADER_ID;
+        getSupportLoaderManager().initLoader(loaderId, null, this);
+
     }
 
     //----------------------------------------------------------------------------------------------
@@ -75,48 +80,60 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
 
     //----------------------------------------------------------------------------------------------
 
-    public class FetchWeatherTask extends AsyncTask<String, Void, String[]>{
+    @Override
+    public Loader<String[]> onCreateLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<String[]>(this) {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
+            String[] mWeatherData = null;
 
-        @Override
-        protected String[] doInBackground(String... strings) {
-
-            String location = strings[0];
-            URL url = NetworkUtils.buildUrl(location);
-            try {
-                String jSONResponse = NetworkUtils.getResponseFromHttpUrl(url);
-                String[] mWeatherData = OpenWeatherJsonUtils.
-                        getSimpleWeatherStringsFromJson(MainActivity.this, jSONResponse);
-                return mWeatherData;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+            @Override
+            protected void onStartLoading() {
+                if(mWeatherData != null)
+                    deliverResult(mWeatherData);
+                else{
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                    forceLoad();
+                }
             }
-        }
 
-        @Override
-        protected void onPostExecute(String[] weatherData) {
-            super.onPostExecute(weatherData);
-
-            if(weatherData == null)
-                showErrorMessage();
-            else{
-                mForecastAdapter.setWeatherData(weatherData); //Called setWeatherData() from AsyncTask
-                showWeatherData();
+            @Override
+            public String[] loadInBackground() {
+                try{
+                    String location = SunshinePreferences.
+                            getPreferredWeatherLocation(MainActivity.this);
+                    URL url = NetworkUtils.buildUrl(location);
+                    String JSONResponse = NetworkUtils.getResponseFromHttpUrl(url);
+                    mWeatherData = OpenWeatherJsonUtils.getSimpleWeatherStringsFromJson(MainActivity.this,
+                            JSONResponse);
+                    return mWeatherData;
+                }catch (Exception e){
+                    e.printStackTrace();
+                    return null;
+                }
             }
+
+            public void deliverResult(String[] data){
+                mWeatherData = data;
+                super.deliverResult(data);
+            }
+
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<String[]> loader, String[] weatherData) {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        if(weatherData == null)
+            showErrorMessage();
+        else{
+            mForecastAdapter.setWeatherData(weatherData); //Called setWeatherData() from AsyncTask
+            showWeatherData();
         }
     }
 
-    //----------------------------------------------------------------------------------------------
+    @Override
+    public void onLoaderReset(Loader<String[]> loader) {
 
-    private void loadWeatherData(){
-        String location = SunshinePreferences.getPreferredWeatherLocation(this);
-        new FetchWeatherTask().execute(location);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -151,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         switch (id){
             case R.id.item_refresh:
                 mForecastAdapter.setWeatherData(null);
-                loadWeatherData();
+                getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
                 return true;
             case R.id.menu_open_map:
                 openLocationInMap();
