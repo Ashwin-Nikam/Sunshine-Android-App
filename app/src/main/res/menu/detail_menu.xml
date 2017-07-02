@@ -8,4 +8,10 @@
         android:icon="@drawable/abc_ic_menu_share_mtrl_alpha"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/item_settings"
+        android:title="Settings"
+        app:showAsAction="never"
+        android:orderInCategory="1" />
+
 </menu>

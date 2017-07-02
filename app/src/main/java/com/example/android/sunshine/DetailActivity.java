@@ -3,6 +3,7 @@ package com.example.android.sunshine;
 import android.content.Intent;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,6 +23,11 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         mWeatherDetail = (TextView) findViewById(R.id.tv_detail_activity);
+
+        ActionBar actionBar = this.getSupportActionBar();
+        if(actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
         displayDetail();
     }
 
@@ -44,6 +50,10 @@ public class DetailActivity extends AppCompatActivity {
                 return true;
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.item_settings:
+                Intent intent = new Intent(DetailActivity.this, SettingsActivity.class);
+                startActivity(intent);
                 return true;
         }
         return true;

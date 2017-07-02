@@ -173,6 +173,10 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.menu_open_map:
                 openLocationInMap();
                 return true;
+            case R.id.item_settings:
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
