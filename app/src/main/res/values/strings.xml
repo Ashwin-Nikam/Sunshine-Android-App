@@ -140,4 +140,9 @@
     <!--Used by SunshinePreferences-->
     <!-- - - - - - - - - - - - - - -->
     <!--NONE-->
+    <string name="pref_units_label_metric">Metric</string>
+    <string name="pref_units_label_imperial">Imperial</string>
+    <string name="pref_units_value_metric">metric</string>
+    <string name="pref_units_value_imperial">imperial</string>
+
 </resources>
