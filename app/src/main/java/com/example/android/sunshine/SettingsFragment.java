@@ -15,6 +15,23 @@ import android.support.v7.preference.PreferenceScreen;
 public class SettingsFragment extends PreferenceFragmentCompat
         implements SharedPreferences.OnSharedPreferenceChangeListener{
 
+    //----------------------------------------------------------------------------------------------
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getPreferenceScreen().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getPreferenceScreen().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -33,6 +50,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
     }
 
+    //----------------------------------------------------------------------------------------------
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         Preference preference = findPreference(s);
@@ -41,6 +60,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
             setPreferenceSummary(preference, value);
         }
     }
+
+    //----------------------------------------------------------------------------------------------
 
     private void setPreferenceSummary(Preference preference, String value){
         if(preference instanceof ListPreference){
@@ -51,17 +72,5 @@ public class SettingsFragment extends PreferenceFragmentCompat
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        getPreferenceScreen().getSharedPreferences()
-                .registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        getPreferenceScreen().getSharedPreferences()
-                .unregisterOnSharedPreferenceChangeListener(this);
-    }
+    //----------------------------------------------------------------------------------------------
 }

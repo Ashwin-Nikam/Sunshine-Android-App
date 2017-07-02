@@ -1,12 +1,14 @@
 package com.example.android.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,13 +26,15 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements
         ForecastAdapter.ForecastAdapterOnClickHandler,
-        LoaderManager.LoaderCallbacks<String[]>{
+        LoaderManager.LoaderCallbacks<String[]>,
+        SharedPreferences.OnSharedPreferenceChangeListener{
 
     TextView mErrorMessageDisplay;
     ProgressBar mLoadingIndicator;
     RecyclerView mRecyclerView;
     ForecastAdapter mForecastAdapter;
     private static final int LOADER_ID = 7;
+    static boolean PREFERENCE_CHANGED = false;
 
     //----------------------------------------------------------------------------------------------
 
@@ -52,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements
 
         int loaderId = LOADER_ID;
         getSupportLoaderManager().initLoader(loaderId, null, this);
+
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(this);
 
     }
 
@@ -139,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements
     //----------------------------------------------------------------------------------------------
 
     private void openLocationInMap(){
-        String location = "1600 Amphitheatre Parkway, CA";
+        String location = SunshinePreferences.getPreferredWeatherLocation(this);
         Uri.Builder builder = new Uri.Builder();
         Uri uri = builder.scheme("geo")
                     .path("0,0")
@@ -179,6 +186,29 @@ public class MainActivity extends AppCompatActivity implements
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        PREFERENCE_CHANGED = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(PREFERENCE_CHANGED == true){
+            PREFERENCE_CHANGED = false;
+            getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
+        }
     }
 
     //----------------------------------------------------------------------------------------------

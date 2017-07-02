@@ -16,8 +16,12 @@
 package com.example.android.sunshine.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.v7.preference.PreferenceManager;
 
-public class SunshinePreferences {
+import com.example.android.sunshine.R;
+
+public class SunshinePreferences{
 
     /*
      * Human readable location string, provided by the API.  Because for styling,
@@ -88,7 +92,11 @@ public class SunshinePreferences {
      */
     public static String getPreferredWeatherLocation(Context context) {
         /** This will be implemented in a future lesson **/
-        return getDefaultWeatherLocation();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String key = context.getString(R.string.pref_location_key);
+        String defaultLocation = context.getString(R.string.pref_location_default);
+        String location = sharedPreferences.getString(key, defaultLocation);
+        return location;
     }
 
     /**
@@ -99,7 +107,14 @@ public class SunshinePreferences {
      */
     public static boolean isMetric(Context context) {
         /** This will be implemented in a future lesson **/
-        return true;
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String key = context.getString(R.string.pref_units_key);
+        String defaultUnits = context.getString(R.string.pref_units_default);
+        String units = sharedPreferences.getString(key, defaultUnits);
+        if(units.equals("metric"))
+            return true;
+        else
+            return false;
     }
 
     /**

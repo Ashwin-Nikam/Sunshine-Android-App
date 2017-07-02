@@ -1,6 +1,7 @@
 package com.example.android.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.ActionBar;
@@ -10,7 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity
+        implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private TextView mWeatherDetail;
     private String mWeatherForDay;
@@ -67,6 +69,13 @@ public class DetailActivity extends AppCompatActivity {
             mWeatherForDay = intent.getStringExtra(Intent.EXTRA_TEXT);
             mWeatherDetail.setText(mWeatherForDay);
         }
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        displayDetail();
     }
 
     //----------------------------------------------------------------------------------------------
