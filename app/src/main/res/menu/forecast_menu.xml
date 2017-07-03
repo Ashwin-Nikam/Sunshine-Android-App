@@ -6,7 +6,7 @@
         android:id="@+id/item_refresh"
         android:title="Refresh"
         android:orderInCategory="1"
-        app:showAsAction="never"></item>
+        app:showAsAction="always"></item>
 
     <item
         android:id="@+id/menu_open_map"
