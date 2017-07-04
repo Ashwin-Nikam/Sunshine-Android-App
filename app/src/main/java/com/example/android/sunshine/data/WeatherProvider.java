@@ -82,7 +82,6 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String s, String[] strings) {
-
         mDb = mDbHelper.getWritableDatabase();
         int numRowsDeleted;
         if(s == null)
