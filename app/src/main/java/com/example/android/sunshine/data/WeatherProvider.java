@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
+import com.example.android.sunshine.utilities.SunshineDateUtils;
+
 /**
  * Created by ashwin on 7/4/17.
  */
@@ -80,11 +82,62 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String s, String[] strings) {
-        return 0;
+
+        mDb = mDbHelper.getWritableDatabase();
+        int numRowsDeleted;
+        if(s == null)
+            s = "1";
+
+        switch (sUriMatcher.match(uri)){
+            case CODE_WEATHER:
+                numRowsDeleted = mDb.delete(WeatherContract.WeatherEntry.TABLE_NAME,
+                        s, strings);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri "+uri);
+        }
+        if(numRowsDeleted != 0)
+            getContext().getContentResolver().notifyChange(uri, null);
+
+        return numRowsDeleted;
     }
 
     @Override
     public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
         return 0;
+    }
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+
+        mDb = mDbHelper.getWritableDatabase();
+        switch (sUriMatcher.match(uri)) {
+            case CODE_WEATHER:
+                mDb.beginTransaction();
+                int numRowsInserted = 0;
+                try {
+                    for (ContentValues value : values) {
+                        long date = value.getAsLong(WeatherContract.WeatherEntry.COLUMN_DATE);
+                        if (!SunshineDateUtils.isDateNormalized(date))
+                            throw new IllegalArgumentException("Date must be normalized and inserted");
+                        long num = mDb.insert(WeatherContract.WeatherEntry.TABLE_NAME, null,
+                                value);
+                        if (num != -1)
+                            numRowsInserted++;
+                    }
+
+                    mDb.setTransactionSuccessful();
+
+                } finally{
+                    mDb.endTransaction();
+                }
+
+                if(numRowsInserted > 0)
+                    getContext().getContentResolver().notifyChange(uri, null);
+                return numRowsInserted;
+
+            default:
+                return super.bulkInsert(uri, values);
+        }
     }
 }
