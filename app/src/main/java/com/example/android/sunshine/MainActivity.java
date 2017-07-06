@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.data.WeatherContract;
+import com.example.android.sunshine.utilities.FakeDataUtils;
 import com.example.android.sunshine.utilities.NetworkUtils;
 import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_forecast);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_forecast);
+
+        FakeDataUtils.insertFakeData(this);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);

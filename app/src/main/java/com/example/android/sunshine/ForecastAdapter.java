@@ -2,6 +2,7 @@ package com.example.android.sunshine;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     private final ForecastAdapterOnClickHandler mOnClickHandler;
     private final Context mContext;
 
-    public ForecastAdapter(Context context, ForecastAdapterOnClickHandler clickHandler){
+    public ForecastAdapter(@NonNull Context context, ForecastAdapterOnClickHandler clickHandler){
         mOnClickHandler = clickHandler;
         mContext = context;
     }
@@ -43,9 +44,9 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     @Override
     public ForecastAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.forecast_list_item, parent, false);
+        view.setFocusable(true);
         ForecastAdapterViewHolder forecastAdapterViewHolder = new ForecastAdapterViewHolder(view);
         return forecastAdapterViewHolder;
     }
