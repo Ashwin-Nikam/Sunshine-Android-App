@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_forecast);
 
-        FakeDataUtils.insertFakeData(this);
+
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
@@ -78,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements
 
         PreferenceManager.getDefaultSharedPreferences(this)
                 .registerOnSharedPreferenceChangeListener(this);
+
+        SunshineSyncUtils.startImmediateSync(this);
 
     }
 

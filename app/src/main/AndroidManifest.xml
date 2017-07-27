@@ -28,6 +28,9 @@
             android:name=".data.WeatherProvider"
             android:exported="false" />
 
+        <service android:name=".SunshineSyncIntentService"
+            android:exported="false" />
+
     </application>
 
 </manifest>
