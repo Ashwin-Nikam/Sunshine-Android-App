@@ -17,10 +17,11 @@ public class SunshineSyncUtils {
 
     private static boolean sInitialized;
 
+    //----------------------------------------------------------------------------------------------
+
     synchronized public static void initialize(@NonNull final Context context) {
         if(sInitialized)
             return;
-
         sInitialized = true;
 
         new AsyncTask<Void, Void, Void>() {
@@ -48,9 +49,13 @@ public class SunshineSyncUtils {
 
     }
 
+    //----------------------------------------------------------------------------------------------
+
     public static void startImmediateSync(@NonNull final Context context) {
         Intent intentToSyncImmediately = new Intent(context, SunshineSyncIntentService.class);
         context.startService(intentToSyncImmediately);
     }
+
+    //----------------------------------------------------------------------------------------------
 
 }
