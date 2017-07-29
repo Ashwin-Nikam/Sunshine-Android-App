@@ -23,9 +23,16 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     private final ForecastAdapterOnClickHandler mOnClickHandler;
     private final Context mContext;
 
+    private static final int VIEW_TYPE_TODAY = 0;
+    private static final int VIEW_TYPE_FUTURE_DAY = 1;
+
+    private boolean mUseTodayLayout;
+
     public ForecastAdapter(@NonNull Context context, ForecastAdapterOnClickHandler clickHandler){
         mOnClickHandler = clickHandler;
         mContext = context;
+
+        mUseTodayLayout = mContext.getResources().getBoolean(R.bool.use_today_layout);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -45,8 +52,22 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     @Override
     public ForecastAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+
+        int layoutId;
+
+        switch (viewType) {
+            case VIEW_TYPE_TODAY:
+                layoutId = R.layout.list_item_forecast_today;
+                break;
+            case VIEW_TYPE_FUTURE_DAY:
+                layoutId = R.layout.forecast_list_item;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid view type "+viewType);
+        }
+
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View view = inflater.inflate(R.layout.forecast_list_item, parent, false);
+        View view = inflater.inflate(layoutId, parent, false);
         view.setFocusable(true);
         ForecastAdapterViewHolder forecastAdapterViewHolder = new ForecastAdapterViewHolder(view);
         return forecastAdapterViewHolder;
@@ -64,8 +85,20 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         int weatherId = mCursor.getInt(MainActivity.INDEX_WEATHER_CONDITION_ID);
         int weatherImageId;
 
-        weatherImageId = SunshineWeatherUtils
-                .getSmallArtResourceIdForWeatherCondition(weatherId);
+        int viewType = getItemViewType(position);
+
+        switch(viewType) {
+            case VIEW_TYPE_TODAY:
+                weatherImageId = SunshineWeatherUtils
+                        .getLargeArtResourceIdForWeatherCondition(weatherId);
+                break;
+            case VIEW_TYPE_FUTURE_DAY:
+                weatherImageId = SunshineWeatherUtils
+                        .getSmallArtResourceIdForWeatherCondition(weatherId);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid view type "+viewType);
+        }
 
         holder.iconView.setImageResource(weatherImageId);
 
@@ -156,4 +189,12 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     //----------------------------------------------------------------------------------------------
 
+
+    @Override
+    public int getItemViewType(int position) {
+        if(mUseTodayLayout && position == 0)
+            return VIEW_TYPE_TODAY;
+        else
+            return VIEW_TYPE_FUTURE_DAY;
+    }
 }
