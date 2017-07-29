@@ -183,4 +183,8 @@
 
 
 
+    <string name="humidity_label">Humidity</string>
+    <string name="pressure_label">Pressure</string>
+    <string name="wind_label">Wind</string>
+
 </resources>
