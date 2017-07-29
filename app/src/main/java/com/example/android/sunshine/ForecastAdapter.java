@@ -28,6 +28,8 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     private boolean mUseTodayLayout;
 
+    //----------------------------------------------------------------------------------------------
+
     public ForecastAdapter(@NonNull Context context, ForecastAdapterOnClickHandler clickHandler){
         mOnClickHandler = clickHandler;
         mContext = context;
@@ -72,6 +74,8 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         ForecastAdapterViewHolder forecastAdapterViewHolder = new ForecastAdapterViewHolder(view);
         return forecastAdapterViewHolder;
     }
+
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void onBindViewHolder(ForecastAdapterViewHolder holder, int position) {
@@ -189,7 +193,6 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     //----------------------------------------------------------------------------------------------
 
-
     @Override
     public int getItemViewType(int position) {
         if(mUseTodayLayout && position == 0)
@@ -197,4 +200,6 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         else
             return VIEW_TYPE_FUTURE_DAY;
     }
+
+    //----------------------------------------------------------------------------------------------
 }
