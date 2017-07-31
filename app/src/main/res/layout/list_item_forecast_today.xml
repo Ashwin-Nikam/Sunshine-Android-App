@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     android:paddingBottom="@dimen/today_forecast_list_item_vertical_padding"
     android:paddingTop="@dimen/today_forecast_list_item_vertical_padding"
-    android:background="@color/colorPrimary">
+    android:background="@drawable/today_touch_selector">
 
     <android.support.constraint.Guideline
         android:id="@+id/horizontal_middle"
@@ -17,7 +17,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp"/>
+        tools:layout_editor_absoluteY="0dp" />
 
     <TextView
         android:id="@+id/date"
